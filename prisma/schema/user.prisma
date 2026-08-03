@@ -6,7 +6,7 @@ model User {
 
   profilePhoto String?
 
-  role   Role @default(CUSTOMER)
+  role   Role 
   status UserStatus @default(ACTIVE)
 
   phone   String? @unique

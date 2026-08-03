@@ -27,7 +27,7 @@ app.get("/", (req: Request, res: Response) => {
 app.use("/api/users", userRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/services", serviceRouter);
-app.use("	/api/technician", technicianRouter);
+app.use("/api/technician", technicianRouter);
 
 app.use(globalErrorHandler);
 
