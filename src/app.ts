@@ -5,6 +5,8 @@ import config from "./config";
 import { userRouter } from "./modules/user/user.route";
 import { authRouter } from "./modules/auth/auth.route";
 import { globalErrorHandler } from "./modules/utils/globalErrorHandler";
+import { serviceRouter } from "./modules/services/service.route";
+import { technicianRouter } from "./modules/technician/technician.router";
 
 const app: Application = express();
 
@@ -24,6 +26,8 @@ app.get("/", (req: Request, res: Response) => {
 
 app.use("/api/users", userRouter);
 app.use("/api/auth", authRouter);
+app.use("/api/services", serviceRouter);
+app.use("	/api/technician", technicianRouter);
 
 app.use(globalErrorHandler);
 
