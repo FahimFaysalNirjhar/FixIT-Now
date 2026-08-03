@@ -1,0 +1,18 @@
+model Booking {
+  id           String            @id @default(uuid())
+  customerId   String
+  technicianId String
+  serviceId    String
+  bookingDate  DateTime
+  note         String?
+  totalAmount  Float
+  status       BookingStatus     @default(REQUESTED)
+  customer     User              @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  technician   TechnicianProfile @relation(fields: [technicianId], references: [id], onDelete: Cascade)
+  service      Service           @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  @@index([customerId])
+  @@index([technicianId])
+  @@index([serviceId])
+  @@map("bookings")
+}

@@ -1,0 +1,27 @@
+model User {
+  id                String             @id @default(uuid())
+  name              String             @db.VarChar(255)
+  email             String             @unique
+  password          String
+
+  profilePhoto      String?
+
+  role              Role
+  status            UserStatus         @default(ACTIVE)
+
+  phone             String?            @unique
+  address           String?
+
+  technicianProfile TechnicianProfile?
+
+  bookings          Booking[]
+
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+
+  @@index([email])
+  @@index([role])
+  @@index([status])
+
+  @@map("users")
+}

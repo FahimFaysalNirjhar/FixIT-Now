@@ -1,0 +1,11 @@
+model Availability {
+  id           String            @id @default(uuid())
+  technicianId String
+  technician   TechnicianProfile @relation(fields: [technicianId], references: [id], onDelete: Cascade)
+  day          Day
+  startTime    DateTime
+  endTime      DateTime
+
+  @@index([technicianId])
+  @@map("availability")
+}
