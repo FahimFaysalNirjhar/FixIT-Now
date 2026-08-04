@@ -4,6 +4,7 @@ import {
   CreateServicePayload,
   CreateTechnicianProfilePayload,
   IUpdateTechnicianProfile,
+  UpdateServicePayload,
 } from "./technician.interface";
 
 const createProfile = async (
@@ -256,6 +257,81 @@ const createService = async (userId: string, payload: CreateServicePayload) => {
   return service;
 };
 
+const updateService = async (
+  userId: string,
+  serviceId: string,
+  payload: UpdateServicePayload,
+) => {
+  const technician = await prisma.technicianProfile.findUniqueOrThrow({
+    where: {
+      userId,
+    },
+  });
+
+  const service = await prisma.service.findUniqueOrThrow({
+    where: {
+      id: serviceId,
+    },
+  });
+
+  if (service.technicianId !== technician.id) {
+    throw new Error("You are not authorized to update this service.");
+  }
+
+  if (payload.categoryId) {
+    await prisma.category.findUniqueOrThrow({
+      where: {
+        id: payload.categoryId,
+      },
+    });
+  }
+
+  const updatedService = await prisma.service.update({
+    where: {
+      id: serviceId,
+    },
+    data: payload,
+    include: {
+      category: true,
+      technician: {
+        include: {
+          user: {
+            omit: {
+              password: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  return updatedService;
+};
+
+const deleteService = async (userId: string, serviceId: string) => {
+  const technician = await prisma.technicianProfile.findUniqueOrThrow({
+    where: {
+      userId,
+    },
+  });
+
+  const service = await prisma.service.findUniqueOrThrow({
+    where: {
+      id: serviceId,
+    },
+  });
+
+  if (service.technicianId !== technician.id) {
+    throw new Error("You are not authorized to delete this service.");
+  }
+
+  await prisma.service.delete({
+    where: {
+      id: serviceId,
+    },
+  });
+};
+
 export const technicianService = {
   createProfile,
   getMyProfile,
@@ -264,4 +340,6 @@ export const technicianService = {
   getMyAvailability,
   deleteAvailability,
   createService,
+  updateService,
+  deleteService,
 };

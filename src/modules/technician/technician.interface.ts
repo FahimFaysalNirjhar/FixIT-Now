@@ -28,3 +28,12 @@ export interface CreateServicePayload {
   location?: string;
   categoryId: string;
 }
+
+export interface UpdateServicePayload {
+  title?: string;
+  description?: string;
+  price?: number;
+  location?: string;
+  categoryId?: string;
+  isActive?: boolean;
+}

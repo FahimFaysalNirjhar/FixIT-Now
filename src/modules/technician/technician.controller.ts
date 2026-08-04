@@ -129,6 +129,46 @@ const createService = catchAsync(
   },
 );
 
+const updateService = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const userId = req.user?.id;
+    const serviceId = req.params.serviceId;
+    const payload = req.body;
+
+    const result = await technicianService.updateService(
+      userId as string,
+      serviceId as string,
+      payload,
+    );
+
+    sendResponse(res, {
+      success: true,
+      statusCode: HttpStatus.OK,
+      message: "Service updated successfully",
+      data: result,
+    });
+  },
+);
+
+const deleteService = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const userId = req.user?.id;
+    const serviceId = req.params.serviceId;
+
+    await technicianService.deleteService(
+      userId as string,
+      serviceId as string,
+    );
+
+    sendResponse(res, {
+      success: true,
+      statusCode: HttpStatus.OK,
+      message: "Service deleted successfully",
+      data: null,
+    });
+  },
+);
+
 export const technicianController = {
   createProfile,
   getMyProfile,
@@ -137,4 +177,6 @@ export const technicianController = {
   getMyAvailability,
   deleteAvailability,
   createService,
+  updateService,
+  deleteService,
 };
