@@ -121,6 +121,36 @@ const updateProfile = async (
   return updatedProfile;
 };
 
+const deleteProfile = async (userId: string) => {
+  const technician = await prisma.technicianProfile.findUniqueOrThrow({
+    where: {
+      userId,
+    },
+    include: {
+      _count: {
+        select: {
+          services: true,
+          bookings: true,
+        },
+      },
+    },
+  });
+
+  if (technician._count.bookings > 0) {
+    throw new Error(
+      "Cannot delete profile because there are associated bookings.",
+    );
+  }
+
+  await prisma.technicianProfile.delete({
+    where: {
+      userId,
+    },
+  });
+
+  return null;
+};
+
 // // availablity related services
 
 const addAvailability = async (
@@ -342,4 +372,5 @@ export const technicianService = {
   createService,
   updateService,
   deleteService,
+  deleteProfile,
 };

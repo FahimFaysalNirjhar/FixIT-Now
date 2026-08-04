@@ -22,6 +22,12 @@ router.patch(
   technicianController.updateProfile,
 );
 
+router.delete(
+  "/profile",
+  auth(Role.TECHNICIAN),
+  technicianController.deleteProfile,
+);
+
 // availability related rotues
 
 router.post(

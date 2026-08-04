@@ -57,6 +57,21 @@ const updateProfile = catchAsync(
   },
 );
 
+const deleteProfile = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const userId = req.user?.id;
+
+    await technicianService.deleteProfile(userId as string);
+
+    sendResponse(res, {
+      success: true,
+      statusCode: HttpStatus.OK,
+      message: "Technician profile deleted successfully",
+      data: null,
+    });
+  },
+);
+
 // availablity related controller
 
 const addAvailability = catchAsync(
@@ -179,4 +194,5 @@ export const technicianController = {
   createService,
   updateService,
   deleteService,
+  deleteProfile,
 };
