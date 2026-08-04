@@ -202,6 +202,30 @@ const getSingleTechnician = async (technicianId: string) => {
   return technician;
 };
 
+const getTechnicianAvailability = async (technicianId: string) => {
+  await prisma.technicianProfile.findUniqueOrThrow({
+    where: {
+      id: technicianId,
+    },
+  });
+
+  const availability = await prisma.availability.findMany({
+    where: {
+      technicianId,
+    },
+    orderBy: [
+      {
+        day: "asc",
+      },
+      {
+        startTime: "asc",
+      },
+    ],
+  });
+
+  return availability;
+};
+
 // technician related
 
 const getMyProfile = async (userId: string) => {
@@ -526,4 +550,5 @@ export const technicianService = {
   deleteProfile,
   getAllTechnicians,
   getSingleTechnician,
+  getTechnicianAvailability,
 };

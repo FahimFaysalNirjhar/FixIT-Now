@@ -39,11 +39,28 @@ const getAllTechnicians = catchAsync(
   },
 );
 
+const getTechnicianAvailability = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const id = req.params.id;
+
+    const result = await technicianService.getTechnicianAvailability(
+      id as string,
+    );
+
+    sendResponse(res, {
+      success: true,
+      statusCode: HttpStatus.OK,
+      message: "Technician availability retrieved successfully",
+      data: result,
+    });
+  },
+);
+
 const getSingleTechnician = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const id = req.params.id;
 
-    const result = await technicianService.getSingleTechnician(id);
+    const result = await technicianService.getSingleTechnician(id as string);
 
     sendResponse(res, {
       success: true,
@@ -229,4 +246,5 @@ export const technicianController = {
   deleteProfile,
   getAllTechnicians,
   getSingleTechnician,
+  getTechnicianAvailability,
 };
