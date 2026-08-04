@@ -5,16 +5,22 @@ model Booking {
   technicianId String
   serviceId    String
 
-  bookingDate DateTime
-  note        String?
+  scheduledStart DateTime
+  scheduledEnd   DateTime
+
+  note String?
 
   totalAmount Float
 
   status BookingStatus @default(REQUESTED)
 
-  customer   User              @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  customer User @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
   technician TechnicianProfile @relation(fields: [technicianId], references: [id], onDelete: Cascade)
-  service    Service           @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  service Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  payment Payment?
 
   reviews Review[]
 
@@ -25,6 +31,7 @@ model Booking {
   @@index([technicianId])
   @@index([serviceId])
   @@index([status])
-  @@index([bookingDate])
+  @@index([scheduledStart])
+  @@index([scheduledEnd])
   @@map("bookings")
 }
