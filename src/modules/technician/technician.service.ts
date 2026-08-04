@@ -145,9 +145,37 @@ const addAvailability = async (
   return availability;
 };
 
+const getMyAvailability = async (userId: string) => {
+  const technician = await prisma.technicianProfile.findUniqueOrThrow({
+    where: {
+      userId,
+    },
+  });
+
+  const availability = await prisma.availability.findMany({
+    where: {
+      technicianId: technician.id,
+    },
+    orderBy: [
+      {
+        day: "asc",
+      },
+      {
+        startTime: "asc",
+      },
+    ],
+    include: {
+      technician: true,
+    },
+  });
+
+  return availability;
+};
+
 export const technicianService = {
   createProfile,
   getMyProfile,
   updateProfile,
   addAvailability,
+  getMyAvailability,
 };

@@ -76,9 +76,23 @@ const addAvailability = catchAsync(
   },
 );
 
+const getMyAvailability = catchAsync(async (req: Request, res: Response) => {
+  const userId = req.user?.id;
+
+  const result = await technicianService.getMyAvailability(userId as string);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: HttpStatus.OK,
+    message: "Availability retrieved successfully",
+    data: result,
+  });
+});
+
 export const technicianController = {
   createProfile,
   getMyProfile,
   updateProfile,
   addAvailability,
+  getMyAvailability,
 };

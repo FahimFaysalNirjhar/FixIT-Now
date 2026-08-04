@@ -22,10 +22,18 @@ router.patch(
   technicianController.updateProfile,
 );
 
+// availability related rotues
+
 router.post(
   "/availability",
   auth(Role.TECHNICIAN),
   technicianController.addAvailability,
+);
+
+router.get(
+  "/availability",
+  auth(Role.TECHNICIAN),
+  technicianController.getMyAvailability,
 );
 
 export const technicianRouter = router;
