@@ -2,6 +2,7 @@ import { prisma } from "../../lib/prisma";
 import {
   CreateCategoryPayload,
   UpdateCategoryPayload,
+  UpdateUserStatusPayload,
 } from "./admin.interface";
 
 const createCategory = async (payload: CreateCategoryPayload) => {
@@ -106,10 +107,38 @@ const getAllUsers = async () => {
   return users;
 };
 
+const updateUserStatus = async (
+  userId: string,
+  payload: UpdateUserStatusPayload,
+) => {
+  const { status } = payload;
+
+  await prisma.user.findUniqueOrThrow({
+    where: {
+      id: userId,
+    },
+  });
+
+  const updatedUser = await prisma.user.update({
+    where: {
+      id: userId,
+    },
+    data: {
+      status,
+    },
+    omit: {
+      password: true,
+    },
+  });
+
+  return updatedUser;
+};
+
 export const adminService = {
   createCategory,
   updateCategory,
   getAllCategories,
   deleteCategory,
   getAllUsers,
+  updateUserStatus,
 };

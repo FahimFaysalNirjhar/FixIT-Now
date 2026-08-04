@@ -26,4 +26,10 @@ router.delete(
 
 router.get("/users", auth(Role.ADMIN), adminController.getAllUsers);
 
+router.patch(
+  "/users/:id/status",
+  auth(Role.ADMIN),
+  adminController.updateUserStatus,
+);
+
 export const adminRouter = router;
