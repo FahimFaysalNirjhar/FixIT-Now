@@ -5,6 +5,9 @@ import { technicianController } from "./technician.controller";
 
 const router = Router();
 
+// public
+router.get("/", technicianController.getAllTechnicians);
+
 router.post(
   "/profile",
   auth(Role.TECHNICIAN),

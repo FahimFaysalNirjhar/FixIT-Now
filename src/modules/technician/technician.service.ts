@@ -1,8 +1,10 @@
+import { Prisma } from "../../../generated/prisma/client";
 import { prisma } from "../../lib/prisma";
 import {
   AddAvailabilityPayload,
   CreateServicePayload,
   CreateTechnicianProfilePayload,
+  ITechnicianQuery,
   IUpdateTechnicianProfile,
   UpdateServicePayload,
 } from "./technician.interface";
@@ -51,6 +53,111 @@ const createProfile = async (
   });
 
   return technicianProfile;
+};
+
+// public
+
+const getAllTechnicians = async (query: ITechnicianQuery) => {
+  const limit = query.limit ? Number(query.limit) : 10;
+  const page = query.page ? Number(query.page) : 1;
+  const skip = (page - 1) * limit;
+
+  const sortBy = query.sortBy || "createdAt";
+  const sortOrder = query.sortOrder || "desc";
+
+  const andConditions: Prisma.TechnicianProfileWhereInput[] = [];
+
+  if (query.searchTerm) {
+    andConditions.push({
+      OR: [
+        {
+          user: {
+            name: {
+              contains: query.searchTerm,
+              mode: "insensitive",
+            },
+          },
+        },
+        {
+          location: {
+            contains: query.searchTerm,
+            mode: "insensitive",
+          },
+        },
+        {
+          bio: {
+            contains: query.searchTerm,
+            mode: "insensitive",
+          },
+        },
+      ],
+    });
+  }
+
+  if (query.location) {
+    andConditions.push({
+      location: {
+        contains: query.location,
+        mode: "insensitive",
+      },
+    });
+  }
+
+  if (query.isAvailable !== undefined) {
+    andConditions.push({
+      isAvailable: query.isAvailable === "true",
+    });
+  }
+
+  if (query.minRating) {
+    andConditions.push({
+      averageRating: {
+        gte: Number(query.minRating),
+      },
+    });
+  }
+
+  const technicians = await prisma.technicianProfile.findMany({
+    where: {
+      AND: andConditions,
+    },
+    take: limit,
+    skip,
+    orderBy: {
+      [sortBy]: sortOrder,
+    },
+    include: {
+      user: {
+        omit: {
+          password: true,
+        },
+      },
+      services: {
+        where: {
+          isActive: true,
+        },
+        include: {
+          category: true,
+        },
+      },
+    },
+  });
+
+  const totalTechnicians = await prisma.technicianProfile.count({
+    where: {
+      AND: andConditions,
+    },
+  });
+
+  return {
+    data: technicians,
+    meta: {
+      page,
+      limit,
+      total: totalTechnicians,
+      totalPage: Math.ceil(totalTechnicians / limit),
+    },
+  };
 };
 
 const getMyProfile = async (userId: string) => {
@@ -373,4 +480,5 @@ export const technicianService = {
   updateService,
   deleteService,
   deleteProfile,
+  getAllTechnicians,
 };

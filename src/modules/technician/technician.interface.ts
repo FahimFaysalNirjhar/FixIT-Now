@@ -37,3 +37,14 @@ export interface UpdateServicePayload {
   categoryId?: string;
   isActive?: boolean;
 }
+
+export interface ITechnicianQuery {
+  page?: string;
+  limit?: string;
+  searchTerm?: string;
+  location?: string;
+  isAvailable?: string;
+  minRating?: string;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
+}

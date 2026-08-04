@@ -23,6 +23,22 @@ const createProfile = catchAsync(
   },
 );
 
+// public
+const getAllTechnicians = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const filters = req.query;
+
+    const result = await technicianService.getAllTechnicians(filters);
+
+    sendResponse(res, {
+      success: true,
+      statusCode: HttpStatus.OK,
+      message: "Technicians retrieved successfully",
+      data: result,
+    });
+  },
+);
+
 const getMyProfile = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const userId = req.user?.id;
@@ -195,4 +211,5 @@ export const technicianController = {
   updateService,
   deleteService,
   deleteProfile,
+  getAllTechnicians,
 };
