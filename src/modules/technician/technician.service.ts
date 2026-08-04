@@ -1,5 +1,6 @@
 import { prisma } from "../../lib/prisma";
 import {
+  AddAvailabilityPayload,
   CreateTechnicianProfilePayload,
   IUpdateTechnicianProfile,
 } from "./technician.interface";
@@ -118,8 +119,35 @@ const updateProfile = async (
   return updatedProfile;
 };
 
+const addAvailability = async (
+  userId: string,
+  payload: AddAvailabilityPayload,
+) => {
+  const technician = await prisma.technicianProfile.findUniqueOrThrow({
+    where: {
+      userId,
+    },
+  });
+
+  if (new Date(payload.startTime) >= new Date(payload.endTime)) {
+    throw new Error("Start time must be before end time.");
+  }
+
+  const availability = await prisma.availability.create({
+    data: {
+      technicianId: technician.id,
+      day: payload.day,
+      startTime: new Date(payload.startTime),
+      endTime: new Date(payload.endTime),
+    },
+  });
+
+  return availability;
+};
+
 export const technicianService = {
   createProfile,
   getMyProfile,
   updateProfile,
+  addAvailability,
 };

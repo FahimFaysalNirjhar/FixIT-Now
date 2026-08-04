@@ -57,8 +57,28 @@ const updateProfile = catchAsync(
   },
 );
 
+const addAvailability = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const userId = req.user?.id;
+    const payload = req.body;
+
+    const result = await technicianService.addAvailability(
+      userId as string,
+      payload,
+    );
+
+    sendResponse(res, {
+      success: true,
+      statusCode: HttpStatus.CREATED,
+      message: "Availability slot added successfully",
+      data: result,
+    });
+  },
+);
+
 export const technicianController = {
   createProfile,
   getMyProfile,
   updateProfile,
+  addAvailability,
 };

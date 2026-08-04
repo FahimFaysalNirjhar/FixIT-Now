@@ -1,3 +1,5 @@
+import { Day } from "../../../generated/prisma/enums";
+
 export interface CreateTechnicianProfilePayload {
   bio?: string;
   experience: number;
@@ -11,4 +13,10 @@ export interface IUpdateTechnicianProfile {
   hourlyRate?: number;
   location?: string;
   isAvailable?: boolean;
+}
+
+export interface AddAvailabilityPayload {
+  day: Day;
+  startTime: Date;
+  endTime: Date;
 }

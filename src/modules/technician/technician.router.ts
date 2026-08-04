@@ -22,4 +22,10 @@ router.patch(
   technicianController.updateProfile,
 );
 
+router.post(
+  "/availability",
+  auth(Role.TECHNICIAN),
+  technicianController.addAvailability,
+);
+
 export const technicianRouter = router;
