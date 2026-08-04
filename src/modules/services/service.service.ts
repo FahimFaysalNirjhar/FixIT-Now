@@ -93,6 +93,40 @@ const getAllServices = async (query: IServiceQuery) => {
   };
 };
 
+const getSingleService = async (serviceId: string) => {
+  const service = await prisma.service.findUniqueOrThrow({
+    where: {
+      id: serviceId,
+      isActive: true,
+    },
+    include: {
+      category: true,
+      technician: {
+        include: {
+          user: {
+            omit: {
+              password: true,
+            },
+          },
+          availability: {
+            orderBy: [
+              {
+                day: "asc",
+              },
+              {
+                startTime: "asc",
+              },
+            ],
+          },
+        },
+      },
+    },
+  });
+
+  return service;
+};
+
 export const serviceService = {
   getAllServices,
+  getSingleService,
 };
