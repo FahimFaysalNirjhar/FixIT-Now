@@ -39,6 +39,22 @@ const getAllTechnicians = catchAsync(
   },
 );
 
+const getSingleTechnician = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const id = req.params.id;
+
+    const result = await technicianService.getSingleTechnician(id);
+
+    sendResponse(res, {
+      success: true,
+      statusCode: HttpStatus.OK,
+      message: "Technician retrieved successfully",
+      data: result,
+    });
+  },
+);
+
+// technician related
 const getMyProfile = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const userId = req.user?.id;
@@ -212,4 +228,5 @@ export const technicianController = {
   deleteService,
   deleteProfile,
   getAllTechnicians,
+  getSingleTechnician,
 };

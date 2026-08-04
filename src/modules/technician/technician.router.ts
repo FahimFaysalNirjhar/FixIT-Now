@@ -7,7 +7,9 @@ const router = Router();
 
 // public
 router.get("/", technicianController.getAllTechnicians);
+router.get("/:id", technicianController.getSingleTechnician);
 
+// technician related
 router.post(
   "/profile",
   auth(Role.TECHNICIAN),
