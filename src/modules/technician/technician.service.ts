@@ -1,5 +1,8 @@
 import { prisma } from "../../lib/prisma";
-import { CreateTechnicianProfilePayload } from "./technician.interface";
+import {
+  CreateTechnicianProfilePayload,
+  IUpdateTechnicianProfile,
+} from "./technician.interface";
 
 const createProfile = async (
   userId: string,
@@ -86,7 +89,37 @@ const getMyProfile = async (userId: string) => {
   return technicianProfile;
 };
 
+const updateProfile = async (
+  userId: string,
+  payload: IUpdateTechnicianProfile,
+) => {
+  const technicianProfile = await prisma.technicianProfile.findUniqueOrThrow({
+    where: {
+      userId,
+    },
+  });
+
+  const updatedProfile = await prisma.technicianProfile.update({
+    where: {
+      id: technicianProfile.id,
+    },
+    data: payload,
+    include: {
+      user: {
+        omit: {
+          password: true,
+        },
+      },
+      availability: true,
+      services: true,
+    },
+  });
+
+  return updatedProfile;
+};
+
 export const technicianService = {
   createProfile,
   getMyProfile,
+  updateProfile,
 };

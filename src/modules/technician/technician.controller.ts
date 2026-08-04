@@ -38,7 +38,27 @@ const getMyProfile = catchAsync(
   },
 );
 
+const updateProfile = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const userId = req.user?.id;
+    const payload = req.body;
+
+    const result = await technicianService.updateProfile(
+      userId as string,
+      payload,
+    );
+
+    sendResponse(res, {
+      success: true,
+      statusCode: HttpStatus.OK,
+      message: "Technician profile updated successfully",
+      data: result,
+    });
+  },
+);
+
 export const technicianController = {
   createProfile,
   getMyProfile,
+  updateProfile,
 };

@@ -16,4 +16,10 @@ router.get(
   technicianController.getMyProfile,
 );
 
+router.patch(
+  "/profile",
+  auth(Role.TECHNICIAN),
+  technicianController.updateProfile,
+);
+
 export const technicianRouter = router;

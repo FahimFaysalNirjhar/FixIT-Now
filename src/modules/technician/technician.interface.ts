@@ -4,3 +4,11 @@ export interface CreateTechnicianProfilePayload {
   hourlyRate: number;
   location: string;
 }
+
+export interface IUpdateTechnicianProfile {
+  bio?: string;
+  experience?: number;
+  hourlyRate?: number;
+  location?: string;
+  isAvailable?: boolean;
+}
