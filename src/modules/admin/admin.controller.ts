@@ -48,8 +48,40 @@ const getAllCategories = catchAsync(
   },
 );
 
+const deleteCategory = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const id = req.params.id;
+
+    await adminService.deleteCategory(id as string);
+
+    sendResponse(res, {
+      success: true,
+      statusCode: HttpStatus.OK,
+      message: "Category deleted successfully",
+      data: null,
+    });
+  },
+);
+
+// user related
+
+const getAllUsers = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const result = await adminService.getAllUsers();
+
+    sendResponse(res, {
+      success: true,
+      statusCode: HttpStatus.OK,
+      message: "Users retrieved successfully",
+      data: result,
+    });
+  },
+);
+
 export const adminController = {
   createCategory,
   updateCategory,
   getAllCategories,
+  deleteCategory,
+  getAllUsers,
 };

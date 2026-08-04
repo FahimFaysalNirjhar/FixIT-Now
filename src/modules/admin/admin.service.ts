@@ -74,8 +74,42 @@ const getAllCategories = async () => {
   return categories;
 };
 
+const deleteCategory = async (categoryId: string) => {
+  await prisma.category.findUniqueOrThrow({
+    where: {
+      id: categoryId,
+    },
+  });
+
+  await prisma.category.delete({
+    where: {
+      id: categoryId,
+    },
+  });
+};
+
+// user related
+
+const getAllUsers = async () => {
+  const users = await prisma.user.findMany({
+    omit: {
+      password: true,
+    },
+    include: {
+      technicianProfile: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  return users;
+};
+
 export const adminService = {
   createCategory,
   updateCategory,
   getAllCategories,
+  deleteCategory,
+  getAllUsers,
 };

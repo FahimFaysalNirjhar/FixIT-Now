@@ -1,6 +1,7 @@
 import { prisma } from "../../lib/prisma";
 import {
   AddAvailabilityPayload,
+  CreateServicePayload,
   CreateTechnicianProfilePayload,
   IUpdateTechnicianProfile,
 } from "./technician.interface";
@@ -209,50 +210,50 @@ const deleteAvailability = async (userId: string, availabilityId: string) => {
 
 // service related services
 
-const createService = async (userId: string, payload: CreateServicePayload) => {
-  const technician = await prisma.technicianProfile.findUniqueOrThrow({
-    where: {
-      userId,
-    },
-    include: {
-      user: true,
-    },
-  });
+// const createService = async (userId: string, payload: CreateServicePayload) => {
+//   const technician = await prisma.technicianProfile.findUniqueOrThrow({
+//     where: {
+//       userId,
+//     },
+//     include: {
+//       user: true,
+//     },
+//   });
 
-  if (technician.user.status === "BLOCKED") {
-    throw new Error("Your account has been blocked. Please contact support.");
-  }
+//   if (technician.user.status === "BLOCKED") {
+//     throw new Error("Your account has been blocked. Please contact support.");
+//   }
 
-  const category = await prisma.category.findUniqueOrThrow({
-    where: {
-      id: payload.categoryId,
-    },
-  });
+//   const category = await prisma.category.findUniqueOrThrow({
+//     where: {
+//       id: payload.categoryId,
+//     },
+//   });
 
-  const service = await prisma.service.create({
-    data: {
-      title: payload.title,
-      description: payload.description,
-      price: payload.price,
-      categoryId: category.id,
-      technicianId: technician.id,
-    },
-    include: {
-      category: true,
-      technician: {
-        include: {
-          user: {
-            omit: {
-              password: true,
-            },
-          },
-        },
-      },
-    },
-  });
+//   const service = await prisma.service.create({
+//     data: {
+//       title: payload.title,
+//       description: payload.description,
+//       price: payload.price,
+//       categoryId: category.id,
+//       technicianId: technician.id,
+//     },
+//     include: {
+//       category: true,
+//       technician: {
+//         include: {
+//           user: {
+//             omit: {
+//               password: true,
+//             },
+//           },
+//         },
+//       },
+//     },
+//   });
 
-  return service;
-};
+//   return service;
+// };
 
 export const technicianService = {
   createProfile,

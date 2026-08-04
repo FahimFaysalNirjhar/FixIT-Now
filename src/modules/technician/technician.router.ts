@@ -42,6 +42,7 @@ router.delete(
   technicianController.deleteAvailability,
 );
 
+
 // service related routes
 
 // router.post(
