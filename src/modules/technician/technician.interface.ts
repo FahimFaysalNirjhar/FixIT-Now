@@ -20,3 +20,10 @@ export interface AddAvailabilityPayload {
   startTime: Date;
   endTime: Date;
 }
+
+export interface CreateServicePayload {
+  title: string;
+  description: string;
+  price: number;
+  categoryId: string;
+}

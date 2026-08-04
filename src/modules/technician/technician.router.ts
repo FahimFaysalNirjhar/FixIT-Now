@@ -36,4 +36,18 @@ router.get(
   technicianController.getMyAvailability,
 );
 
+router.delete(
+  "/availability/:id",
+  auth(Role.TECHNICIAN),
+  technicianController.deleteAvailability,
+);
+
+// service related routes
+
+// router.post(
+//   "/services",
+//   auth(Role.TECHNICIAN),
+//   technicianController.createService,
+// );
+
 export const technicianRouter = router;

@@ -57,6 +57,8 @@ const updateProfile = catchAsync(
   },
 );
 
+// availablity related controller
+
 const addAvailability = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const userId = req.user?.id;
@@ -89,10 +91,50 @@ const getMyAvailability = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const deleteAvailability = catchAsync(async (req: Request, res: Response) => {
+  const userId = req.user?.id;
+  const availabilityId = req.params.id;
+
+  await technicianService.deleteAvailability(
+    userId as string,
+    availabilityId as string,
+  );
+
+  sendResponse(res, {
+    success: true,
+    statusCode: HttpStatus.OK,
+    message: "Availability slot deleted successfully",
+    data: null,
+  });
+});
+
+// service related controller
+
+// const createService = catchAsync(
+//   async (req: Request, res: Response, next: NextFunction) => {
+//     const userId = req.user?.id;
+//     const payload = req.body;
+
+//     const result = await technicianService.createService(
+//       userId as string,
+//       payload,
+//     );
+
+//     sendResponse(res, {
+//       success: true,
+//       statusCode: HttpStatus.CREATED,
+//       message: "Service created successfully",
+//       data: result,
+//     });
+//   },
+// );
+
 export const technicianController = {
   createProfile,
   getMyProfile,
   updateProfile,
   addAvailability,
   getMyAvailability,
+  deleteAvailability,
+  // createService,
 };

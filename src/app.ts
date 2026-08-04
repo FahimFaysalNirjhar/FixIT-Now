@@ -7,6 +7,7 @@ import { authRouter } from "./modules/auth/auth.route";
 import { globalErrorHandler } from "./modules/utils/globalErrorHandler";
 import { serviceRouter } from "./modules/services/service.route";
 import { technicianRouter } from "./modules/technician/technician.router";
+import { adminRouter } from "./modules/admin/admin.route";
 
 const app: Application = express();
 
@@ -28,6 +29,7 @@ app.use("/api/users", userRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/services", serviceRouter);
 app.use("/api/technician", technicianRouter);
+app.use("/api/admin", adminRouter);
 
 app.use(globalErrorHandler);
 

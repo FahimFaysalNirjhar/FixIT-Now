@@ -119,6 +119,8 @@ const updateProfile = async (
   return updatedProfile;
 };
 
+// // availablity related services
+
 const addAvailability = async (
   userId: string,
   payload: AddAvailabilityPayload,
@@ -127,7 +129,14 @@ const addAvailability = async (
     where: {
       userId,
     },
+    include: {
+      user: true,
+    },
   });
+
+  if (technician.user.status === "BLOCKED") {
+    throw new Error("Your account has been blocked. Please contact support.");
+  }
 
   if (new Date(payload.startTime) >= new Date(payload.endTime)) {
     throw new Error("Start time must be before end time.");
@@ -172,10 +181,84 @@ const getMyAvailability = async (userId: string) => {
   return availability;
 };
 
+const deleteAvailability = async (userId: string, availabilityId: string) => {
+  const technician = await prisma.technicianProfile.findUniqueOrThrow({
+    where: {
+      userId,
+    },
+  });
+
+  const availability = await prisma.availability.findUniqueOrThrow({
+    where: {
+      id: availabilityId,
+    },
+  });
+
+  if (availability.technicianId !== technician.id) {
+    throw new Error("You are not authorized to delete this availability slot.");
+  }
+
+  await prisma.availability.delete({
+    where: {
+      id: availabilityId,
+    },
+  });
+
+  return null;
+};
+
+// service related services
+
+const createService = async (userId: string, payload: CreateServicePayload) => {
+  const technician = await prisma.technicianProfile.findUniqueOrThrow({
+    where: {
+      userId,
+    },
+    include: {
+      user: true,
+    },
+  });
+
+  if (technician.user.status === "BLOCKED") {
+    throw new Error("Your account has been blocked. Please contact support.");
+  }
+
+  const category = await prisma.category.findUniqueOrThrow({
+    where: {
+      id: payload.categoryId,
+    },
+  });
+
+  const service = await prisma.service.create({
+    data: {
+      title: payload.title,
+      description: payload.description,
+      price: payload.price,
+      categoryId: category.id,
+      technicianId: technician.id,
+    },
+    include: {
+      category: true,
+      technician: {
+        include: {
+          user: {
+            omit: {
+              password: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  return service;
+};
+
 export const technicianService = {
   createProfile,
   getMyProfile,
   updateProfile,
   addAvailability,
   getMyAvailability,
+  deleteAvailability,
 };
