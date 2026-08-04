@@ -23,6 +23,22 @@ const createProfile = catchAsync(
   },
 );
 
+const getMyProfile = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const userId = req.user?.id;
+
+    const result = await technicianService.getMyProfile(userId as string);
+
+    sendResponse(res, {
+      success: true,
+      statusCode: HttpStatus.OK,
+      message: "Technician profile retrieved successfully",
+      data: result,
+    });
+  },
+);
+
 export const technicianController = {
   createProfile,
+  getMyProfile,
 };

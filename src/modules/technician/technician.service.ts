@@ -47,6 +47,46 @@ const createProfile = async (
   return technicianProfile;
 };
 
+const getMyProfile = async (userId: string) => {
+  const technicianProfile = await prisma.technicianProfile.findUniqueOrThrow({
+    where: {
+      userId,
+    },
+    include: {
+      user: {
+        omit: {
+          password: true,
+        },
+      },
+      availability: true,
+      services: {
+        include: {
+          category: true,
+        },
+      },
+      reviews: {
+        include: {
+          customer: {
+            omit: {
+              password: true,
+            },
+          },
+        },
+      },
+      _count: {
+        select: {
+          services: true,
+          bookings: true,
+          reviews: true,
+        },
+      },
+    },
+  });
+
+  return technicianProfile;
+};
+
 export const technicianService = {
   createProfile,
+  getMyProfile,
 };

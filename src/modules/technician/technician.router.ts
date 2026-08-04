@@ -10,5 +10,10 @@ router.post(
   auth(Role.TECHNICIAN),
   technicianController.createProfile,
 );
+router.get(
+  "/profile",
+  auth(Role.TECHNICIAN),
+  technicianController.getMyProfile,
+);
 
 export const technicianRouter = router;
