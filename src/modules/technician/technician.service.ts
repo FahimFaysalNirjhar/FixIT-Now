@@ -208,52 +208,53 @@ const deleteAvailability = async (userId: string, availabilityId: string) => {
   return null;
 };
 
-// service related services
+// service related
 
-// const createService = async (userId: string, payload: CreateServicePayload) => {
-//   const technician = await prisma.technicianProfile.findUniqueOrThrow({
-//     where: {
-//       userId,
-//     },
-//     include: {
-//       user: true,
-//     },
-//   });
+const createService = async (userId: string, payload: CreateServicePayload) => {
+  const technician = await prisma.technicianProfile.findUniqueOrThrow({
+    where: {
+      userId,
+    },
+    include: {
+      user: true,
+    },
+  });
 
-//   if (technician.user.status === "BLOCKED") {
-//     throw new Error("Your account has been blocked. Please contact support.");
-//   }
+  if (technician.user.status === "BLOCKED") {
+    throw new Error("Your account has been blocked. Please contact support.");
+  }
 
-//   const category = await prisma.category.findUniqueOrThrow({
-//     where: {
-//       id: payload.categoryId,
-//     },
-//   });
+  const category = await prisma.category.findUniqueOrThrow({
+    where: {
+      id: payload.categoryId,
+    },
+  });
 
-//   const service = await prisma.service.create({
-//     data: {
-//       title: payload.title,
-//       description: payload.description,
-//       price: payload.price,
-//       categoryId: category.id,
-//       technicianId: technician.id,
-//     },
-//     include: {
-//       category: true,
-//       technician: {
-//         include: {
-//           user: {
-//             omit: {
-//               password: true,
-//             },
-//           },
-//         },
-//       },
-//     },
-//   });
+  const service = await prisma.service.create({
+    data: {
+      title: payload.title,
+      description: payload.description,
+      price: payload.price,
+      location: payload.location,
+      categoryId: payload.categoryId,
+      technicianId: technician.id,
+    },
+    include: {
+      category: true,
+      technician: {
+        include: {
+          user: {
+            omit: {
+              password: true,
+            },
+          },
+        },
+      },
+    },
+  });
 
-//   return service;
-// };
+  return service;
+};
 
 export const technicianService = {
   createProfile,
@@ -262,4 +263,5 @@ export const technicianService = {
   addAvailability,
   getMyAvailability,
   deleteAvailability,
+  createService,
 };

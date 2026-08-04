@@ -23,7 +23,8 @@ export interface AddAvailabilityPayload {
 
 export interface CreateServicePayload {
   title: string;
-  description: string;
+  description?: string;
   price: number;
+  location?: string;
   categoryId: string;
 }

@@ -42,13 +42,12 @@ router.delete(
   technicianController.deleteAvailability,
 );
 
-
 // service related routes
 
-// router.post(
-//   "/services",
-//   auth(Role.TECHNICIAN),
-//   technicianController.createService,
-// );
+router.post(
+  "/services",
+  auth(Role.TECHNICIAN),
+  technicianController.createService,
+);
 
 export const technicianRouter = router;

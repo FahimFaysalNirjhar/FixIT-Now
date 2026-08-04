@@ -6,7 +6,7 @@ model User {
 
   profilePhoto String?
 
-  role   Role 
+  role   Role
   status UserStatus @default(ACTIVE)
 
   phone   String? @unique
@@ -16,7 +16,7 @@ model User {
 
   bookings Booking[]
 
-  reviews   Review[]
+  reviews Review[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

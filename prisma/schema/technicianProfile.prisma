@@ -1,29 +1,28 @@
 model TechnicianProfile {
-  id              String         @id @default(uuid())
+  id String @id @default(uuid())
 
-  userId          String         @unique
-  user            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  bio             String?
-  experience      Int
-  hourlyRate      Float
-  location        String
+  bio        String?
+  experience Int
+  hourlyRate Float
+  location   String
 
-  averageRating   Float          @default(0)
-  isAvailable     Boolean        @default(true)
+  averageRating Float   @default(0)
+  isAvailable   Boolean @default(true)
 
-  availability    Availability[]
-  services        Service[]
-  bookings        Booking[]
-  reviews         Review[]
+  availability Availability[]
+  services     Service[]
+  bookings     Booking[]
+  reviews      Review[]
 
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([userId])
   @@index([location])
   @@index([averageRating])
   @@index([isAvailable])
-
   @@map("technician_profiles")
 }

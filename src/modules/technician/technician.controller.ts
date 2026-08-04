@@ -108,26 +108,26 @@ const deleteAvailability = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-// service related controller
+// service related
 
-// const createService = catchAsync(
-//   async (req: Request, res: Response, next: NextFunction) => {
-//     const userId = req.user?.id;
-//     const payload = req.body;
+const createService = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const userId = req.user?.id;
+    const payload = req.body;
 
-//     const result = await technicianService.createService(
-//       userId as string,
-//       payload,
-//     );
+    const result = await technicianService.createService(
+      userId as string,
+      payload,
+    );
 
-//     sendResponse(res, {
-//       success: true,
-//       statusCode: HttpStatus.CREATED,
-//       message: "Service created successfully",
-//       data: result,
-//     });
-//   },
-// );
+    sendResponse(res, {
+      success: true,
+      statusCode: HttpStatus.CREATED,
+      message: "Service created successfully",
+      data: result,
+    });
+  },
+);
 
 export const technicianController = {
   createProfile,
@@ -136,5 +136,5 @@ export const technicianController = {
   addAvailability,
   getMyAvailability,
   deleteAvailability,
-  // createService,
+  createService,
 };

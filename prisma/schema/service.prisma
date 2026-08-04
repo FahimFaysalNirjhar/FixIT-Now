@@ -1,17 +1,20 @@
 model Service {
   id String @id @default(uuid())
 
-  title       String
-  description String
+  title       String  @db.VarChar(150)
+  description String?
 
   price Float
 
-  isAvailable Boolean @default(true)
+  location String? @db.VarChar(150)
+
+  isActive Boolean @default(true)
 
   categoryId   String
   technicianId String
 
-  category   Category          @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
   technician TechnicianProfile @relation(fields: [technicianId], references: [id], onDelete: Cascade)
 
   bookings Booking[]
