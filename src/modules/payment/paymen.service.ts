@@ -5,71 +5,125 @@ import { stripe } from "../../lib/stripe";
 import { handleCheckoutCompleted } from "./payment.utils";
 
 const createCheckoutSession = async (bookingId: string) => {
-  const booking = await prisma.booking.findUniqueOrThrow({
-    where: {
-      id: bookingId,
-    },
-    include: {
-      customer: true,
-      service: true,
-      payment: true,
-    },
-  });
+  const paymentUrl = await prisma.$transaction(async (tx) => {
+    const booking = await tx.booking.findUniqueOrThrow({
+      where: {
+        id: bookingId,
+      },
+      include: {
+        customer: true,
+        service: true,
+        payment: true,
+      },
+    });
 
-  if (booking.payment?.status === "PAID") {
-    throw new Error("This booking has already been paid.");
-  }
+    if (booking.payment?.status === "PAID") {
+      throw new Error("This booking has already been paid.");
+    }
 
-  let stripeCustomerId = booking.payment?.stripeCustomerId;
+    let stripeCustomerId = booking.payment?.stripeCustomerId;
 
-  if (!stripeCustomerId) {
-    const customer = await stripe.customers.create({
-      email: booking.customer.email,
-      name: booking.customer.name,
+    if (!stripeCustomerId) {
+      const customer = await stripe.customers.create({
+        email: booking.customer.email,
+        name: booking.customer.name,
+        metadata: {
+          bookingId: booking.id,
+        },
+      });
+
+      stripeCustomerId = customer.id;
+    }
+
+    const session = await stripe.checkout.sessions.create({
+      mode: "payment",
+      customer: stripeCustomerId,
+      payment_method_types: ["card"],
+
+      line_items: [
+        {
+          price_data: {
+            currency: "usd",
+            product_data: {
+              name: booking.service.title,
+              description: booking.service.description ?? "",
+            },
+            unit_amount: Math.round(booking.totalAmount * 100),
+          },
+          quantity: 1,
+        },
+      ],
+
+      success_url: `${config.app_url}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${config.app_url}/payment/cancel`,
+
       metadata: {
         bookingId: booking.id,
       },
     });
 
-    stripeCustomerId = customer.id;
-  }
-
-  const session = await stripe.checkout.sessions.create({
-    mode: "payment",
-
-    customer: stripeCustomerId,
-
-    payment_method_types: ["card"],
-
-    line_items: [
-      {
-        price_data: {
-          currency: "usd",
-
-          product_data: {
-            name: booking.service.title,
-            description: booking.service.description ?? "",
-          },
-
-          unit_amount: Math.round(booking.totalAmount * 100),
-        },
-
-        quantity: 1,
+    await tx.payment.upsert({
+      where: {
+        bookingId: booking.id,
       },
-    ],
+      create: {
+        bookingId: booking.id,
+        amount: booking.totalAmount,
+        stripeCustomerId,
+        stripeSessionId: session.id,
+      },
+      update: {
+        stripeCustomerId,
+        stripeSessionId: session.id,
+      },
+    });
 
-    success_url: `${config.app_url}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
-
-    cancel_url: `${config.app_url}/payment/cancel`,
-
-    metadata: {
-      bookingId: booking.id,
-    },
+    return session.url!;
   });
 
   return {
-    paymentUrl: session.url,
+    paymentUrl,
   };
+};
+
+const getPaymentHistory = async (customerId: string) => {
+  const payments = await prisma.payment.findMany({
+    where: {
+      booking: {
+        customerId,
+      },
+    },
+    include: {
+      booking: {
+        select: {
+          id: true,
+          scheduledStart: true,
+          scheduledEnd: true,
+          status: true,
+          service: {
+            select: {
+              title: true,
+            },
+          },
+          technician: {
+            select: {
+              user: {
+                select: {
+                  name: true,
+                  profilePhoto: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  return payments;
 };
 
 const handleWebhook = async (payload: Buffer, signature: string) => {
@@ -96,4 +150,5 @@ const handleWebhook = async (payload: Buffer, signature: string) => {
 export const paymentService = {
   createCheckoutSession,
   handleWebhook,
+  getPaymentHistory,
 };
