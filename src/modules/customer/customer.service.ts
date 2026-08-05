@@ -1,9 +1,9 @@
+import { BookingStatus } from "../../../generated/prisma/enums";
 import { prisma } from "../../lib/prisma";
 import {
   CreateBookingPayload,
   UpdateCustomerProfilePayload,
 } from "./customer.interface";
-
 const updateProfile = async (
   userId: string,
   payload: UpdateCustomerProfilePayload,
@@ -101,7 +101,7 @@ const createBooking = async (
     where: {
       technicianId: service.technicianId,
       status: {
-        in: ["REQUESTED", "ACCEPTED", "IN_PROGRESS"],
+        in: [BookingStatus.REQUESTED, BookingStatus.ACCEPTED],
       },
       AND: [
         {

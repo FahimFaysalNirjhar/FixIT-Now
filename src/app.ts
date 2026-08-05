@@ -12,6 +12,7 @@ import { categoryRouter } from "./modules/categories/category.route";
 import { customerRouter } from "./modules/customer/customer.route";
 import { paymentRouter } from "./modules/payment/payment.route";
 import { paymentController } from "./modules/payment/payment.controller";
+import { reviewRouter } from "./modules/review/review.router";
 
 const app: Application = express();
 
@@ -44,6 +45,7 @@ app.use("/api/admin", adminRouter);
 app.use("/api/categories", categoryRouter);
 app.use("/api/customer", customerRouter);
 app.use("/api/payment", paymentRouter);
+app.use("/api/reviews", reviewRouter);
 
 app.use(globalErrorHandler);
 
