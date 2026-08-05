@@ -10,6 +10,7 @@ import { technicianRouter } from "./modules/technician/technician.router";
 import { adminRouter } from "./modules/admin/admin.route";
 import { categoryRouter } from "./modules/categories/category.route";
 import { customerRouter } from "./modules/customer/customer.route";
+import { paymentRouter } from "./modules/payment/payment.route";
 
 const app: Application = express();
 
@@ -19,6 +20,9 @@ app.use(
     credentials: true,
   }),
 );
+
+app.use("/api/payment/webhook", express.raw({ type: "application/json" }));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -34,6 +38,7 @@ app.use("/api/technician", technicianRouter);
 app.use("/api/admin", adminRouter);
 app.use("/api/categories", categoryRouter);
 app.use("/api/customer", customerRouter);
+app.use("/api/payment", paymentRouter);
 
 app.use(globalErrorHandler);
 
