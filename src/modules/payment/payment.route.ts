@@ -19,4 +19,10 @@ router.get(
   paymentController.getPaymentHistory,
 );
 
+router.get(
+  "/:id",
+  auth(Role.CUSTOMER),
+  paymentController.getSinglePaymentHistory,
+);
+
 export const paymentRouter = router;

@@ -126,6 +126,47 @@ const getPaymentHistory = async (customerId: string) => {
   return payments;
 };
 
+const getSinglePaymentHistory = async (
+  paymentId: string,
+  customerId: string,
+) => {
+  const payment = await prisma.payment.findFirstOrThrow({
+    where: {
+      id: paymentId,
+      booking: {
+        customerId,
+      },
+    },
+    include: {
+      booking: {
+        include: {
+          service: {
+            select: {
+              title: true,
+              description: true,
+              price: true,
+            },
+          },
+          technician: {
+            include: {
+              user: {
+                select: {
+                  name: true,
+                  email: true,
+                  phone: true,
+                  profilePhoto: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+
+  return payment;
+};
+
 const handleWebhook = async (payload: Buffer, signature: string) => {
   const event = stripe.webhooks.constructEvent(
     payload,
@@ -151,4 +192,5 @@ export const paymentService = {
   createCheckoutSession,
   handleWebhook,
   getPaymentHistory,
+  getSinglePaymentHistory,
 };
