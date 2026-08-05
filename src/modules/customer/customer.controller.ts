@@ -57,8 +57,48 @@ const getMyBookings = catchAsync(
   },
 );
 
+const getSingleBooking = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const userId = req.user?.id;
+    const id = req.params.id;
+
+    const result = await customerService.getSingleBooking(
+      userId as string,
+      id as string,
+    );
+
+    sendResponse(res, {
+      success: true,
+      statusCode: HttpStatus.OK,
+      message: "Booking retrieved successfully",
+      data: result,
+    });
+  },
+);
+
+const cancelBooking = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const userId = req.user?.id;
+    const id = req.params.id;
+
+    const result = await customerService.cancelBooking(
+      userId as string,
+      id as string,
+    );
+
+    sendResponse(res, {
+      success: true,
+      statusCode: HttpStatus.OK,
+      message: "Booking cancelled successfully",
+      data: result,
+    });
+  },
+);
+
 export const customerController = {
   updateProfile,
   createBooking,
   getMyBookings,
+  getSingleBooking,
+  cancelBooking,
 };

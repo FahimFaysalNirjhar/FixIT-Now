@@ -164,8 +164,76 @@ const getMyBookings = async (customerId: string) => {
   return bookings;
 };
 
+const getSingleBooking = async (customerId: string, bookingId: string) => {
+  const booking = await prisma.booking.findFirstOrThrow({
+    where: {
+      id: bookingId,
+      customerId,
+    },
+    include: {
+      service: {
+        include: {
+          category: true,
+        },
+      },
+      technician: {
+        include: {
+          user: {
+            omit: {
+              password: true,
+            },
+          },
+        },
+      },
+      customer: {
+        omit: {
+          password: true,
+        },
+      },
+      payment: true,
+      reviews: true,
+    },
+  });
+
+  return booking;
+};
+
+const cancelBooking = async (customerId: string, bookingId: string) => {
+  const booking = await prisma.booking.findFirstOrThrow({
+    where: {
+      id: bookingId,
+      customerId,
+    },
+  });
+
+  if (booking.status === "COMPLETED") {
+    throw new Error("Completed bookings cannot be cancelled.");
+  }
+
+  if (booking.status === "CANCELLED") {
+    throw new Error("Booking is already cancelled.");
+  }
+
+  if (booking.status === "IN_PROGRESS") {
+    throw new Error("An ongoing booking cannot be cancelled.");
+  }
+
+  const updatedBooking = await prisma.booking.update({
+    where: {
+      id: booking.id,
+    },
+    data: {
+      status: "CANCELLED",
+    },
+  });
+
+  return updatedBooking;
+};
+
 export const customerService = {
   updateProfile,
   createBooking,
   getMyBookings,
+  getSingleBooking,
+  cancelBooking,
 };
