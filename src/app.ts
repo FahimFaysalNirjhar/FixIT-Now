@@ -11,6 +11,7 @@ import { adminRouter } from "./modules/admin/admin.route";
 import { categoryRouter } from "./modules/categories/category.route";
 import { customerRouter } from "./modules/customer/customer.route";
 import { paymentRouter } from "./modules/payment/payment.route";
+import { paymentController } from "./modules/payment/payment.controller";
 
 const app: Application = express();
 
@@ -21,7 +22,11 @@ app.use(
   }),
 );
 
-app.use("/api/payment/webhook", express.raw({ type: "application/json" }));
+app.post(
+  "/api/payment/webhook",
+  express.raw({ type: "application/json" }),
+  paymentController.handleWebhook,
+);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

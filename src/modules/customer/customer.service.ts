@@ -76,6 +76,27 @@ const createBooking = async (
   }
 
   // Prevent overlapping bookings
+  // const conflict = await prisma.booking.findFirst({
+  //   where: {
+  //     technicianId: service.technicianId,
+  //     status: {
+  //       in: ["REQUESTED", "ACCEPTED", "IN_PROGRESS"],
+  //     },
+  //     AND: [
+  //       {
+  //         scheduledStart: {
+  //           lt: scheduledEnd,
+  //         },
+  //       },
+  //       {
+  //         scheduledEnd: {
+  //           gt: scheduledStart,
+  //         },
+  //       },
+  //     ],
+  //   },
+  // });
+
   const conflict = await prisma.booking.findFirst({
     where: {
       technicianId: service.technicianId,
@@ -95,6 +116,12 @@ const createBooking = async (
         },
       ],
     },
+  });
+
+  console.log("Conflict:", conflict);
+  console.log({
+    requestedStart: scheduledStart,
+    requestedEnd: scheduledEnd,
   });
 
   if (conflict) {
