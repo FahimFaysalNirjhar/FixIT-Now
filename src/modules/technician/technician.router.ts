@@ -5,12 +5,14 @@ import { technicianController } from "./technician.controller";
 
 const router = Router();
 
-// public
-router.get("/", technicianController.getAllTechnicians);
-router.get("/:id", technicianController.getSingleTechnician);
-router.get("/:id/availability", technicianController.getTechnicianAvailability);
+// booking related
+router.get(
+  "/bookings",
+  auth(Role.TECHNICIAN),
+  technicianController.getMyBookings,
+);
 
-// technician related
+// technician related without params
 router.post(
   "/profile",
   auth(Role.TECHNICIAN),
@@ -34,8 +36,7 @@ router.delete(
   technicianController.deleteProfile,
 );
 
-// availability related rotues
-
+// availability related rotues without params
 router.post(
   "/availability",
   auth(Role.TECHNICIAN),
@@ -48,6 +49,20 @@ router.get(
   technicianController.getMyAvailability,
 );
 
+// service related
+router.post(
+  "/services",
+  auth(Role.TECHNICIAN),
+  technicianController.createService,
+);
+
+// public
+router.get("/", technicianController.getAllTechnicians);
+router.get("/:id", technicianController.getSingleTechnician);
+router.get("/:id/availability", technicianController.getTechnicianAvailability);
+
+// availability related rotues with params
+
 router.delete(
   "/availability/:id",
   auth(Role.TECHNICIAN),
@@ -55,12 +70,6 @@ router.delete(
 );
 
 // service related
-
-router.post(
-  "/services",
-  auth(Role.TECHNICIAN),
-  technicianController.createService,
-);
 
 router.patch(
   "/services/:serviceId",
@@ -72,6 +81,13 @@ router.delete(
   "/services/:serviceId",
   auth(Role.TECHNICIAN),
   technicianController.deleteService,
+);
+
+// bookings related with params
+router.patch(
+  "/bookings/:id/status",
+  auth(Role.TECHNICIAN),
+  technicianController.updateBookingStatus,
 );
 
 export const technicianRouter = router;

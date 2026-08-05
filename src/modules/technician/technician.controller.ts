@@ -233,6 +233,43 @@ const deleteService = catchAsync(
   },
 );
 
+// booking related
+
+const getMyBookings = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const userId = req.user?.id;
+
+    const result = await technicianService.getMyBookings(userId as string);
+
+    sendResponse(res, {
+      success: true,
+      statusCode: HttpStatus.OK,
+      message: "Bookings retrieved successfully",
+      data: result,
+    });
+  },
+);
+
+const updateBookingStatus = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const userId = req.user?.id;
+    const id = req.params.id;
+
+    const result = await technicianService.updateBookingStatus(
+      userId as string,
+      id as string,
+      req.body.status,
+    );
+
+    sendResponse(res, {
+      success: true,
+      statusCode: HttpStatus.OK,
+      message: "Booking status updated successfully",
+      data: result,
+    });
+  },
+);
+
 export const technicianController = {
   createProfile,
   getMyProfile,
@@ -247,4 +284,6 @@ export const technicianController = {
   getAllTechnicians,
   getSingleTechnician,
   getTechnicianAvailability,
+  getMyBookings,
+  updateBookingStatus,
 };

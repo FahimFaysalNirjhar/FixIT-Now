@@ -1,4 +1,4 @@
-import { Prisma } from "../../../generated/prisma/client";
+import { BookingStatus, Prisma } from "../../../generated/prisma/client";
 import { prisma } from "../../lib/prisma";
 import {
   AddAvailabilityPayload,
@@ -537,6 +537,83 @@ const deleteService = async (userId: string, serviceId: string) => {
   });
 };
 
+// booking related
+
+const getMyBookings = async (userId: string) => {
+  const technician = await prisma.technicianProfile.findUniqueOrThrow({
+    where: {
+      userId,
+    },
+  });
+
+  const bookings = await prisma.booking.findMany({
+    where: {
+      technicianId: technician.id,
+    },
+    orderBy: {
+      scheduledStart: "asc",
+    },
+    include: {
+      customer: {
+        omit: {
+          password: true,
+        },
+      },
+      service: {
+        include: {
+          category: true,
+        },
+      },
+      payment: true,
+      reviews: true,
+    },
+  });
+
+  return bookings;
+};
+
+const updateBookingStatus = async (
+  userId: string,
+  bookingId: string,
+  status: BookingStatus,
+) => {
+  const technician = await prisma.technicianProfile.findUniqueOrThrow({
+    where: {
+      userId,
+    },
+  });
+
+  const booking = await prisma.booking.findFirstOrThrow({
+    where: {
+      id: bookingId,
+      technicianId: technician.id,
+    },
+  });
+
+  if (booking.status === "COMPLETED" || booking.status === "CANCELLED") {
+    throw new Error("This booking cannot be updated.");
+  }
+
+  const updatedBooking = await prisma.booking.update({
+    where: {
+      id: booking.id,
+    },
+    data: {
+      status,
+    },
+    include: {
+      customer: {
+        omit: {
+          password: true,
+        },
+      },
+      service: true,
+    },
+  });
+
+  return updatedBooking;
+};
+
 export const technicianService = {
   createProfile,
   getMyProfile,
@@ -551,4 +628,6 @@ export const technicianService = {
   getAllTechnicians,
   getSingleTechnician,
   getTechnicianAvailability,
+  getMyBookings,
+  updateBookingStatus,
 };

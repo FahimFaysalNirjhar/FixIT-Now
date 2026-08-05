@@ -22,9 +22,6 @@ enum Day {
 enum BookingStatus {
   REQUESTED
   ACCEPTED
-  DECLINED
-  PAID
-  IN_PROGRESS
   COMPLETED
   CANCELLED
 }

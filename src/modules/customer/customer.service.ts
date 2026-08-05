@@ -214,7 +214,7 @@ const cancelBooking = async (customerId: string, bookingId: string) => {
     throw new Error("Booking is already cancelled.");
   }
 
-  if (booking.status === "IN_PROGRESS") {
+  if (booking.status === "ACCEPTED") {
     throw new Error("An ongoing booking cannot be cancelled.");
   }
 
