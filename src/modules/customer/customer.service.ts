@@ -133,7 +133,39 @@ const createBooking = async (
   return booking;
 };
 
+const getMyBookings = async (customerId: string) => {
+  const bookings = await prisma.booking.findMany({
+    where: {
+      customerId,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+    include: {
+      service: {
+        include: {
+          category: true,
+        },
+      },
+      technician: {
+        include: {
+          user: {
+            omit: {
+              password: true,
+            },
+          },
+        },
+      },
+      reviews: true,
+      payment: true,
+    },
+  });
+
+  return bookings;
+};
+
 export const customerService = {
   updateProfile,
   createBooking,
+  getMyBookings,
 };
