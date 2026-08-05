@@ -32,4 +32,8 @@ router.patch(
   adminController.updateUserStatus,
 );
 
+//booking related
+
+router.get("/bookings", auth(Role.ADMIN), adminController.getAllBookings);
+
 export const adminRouter = router;

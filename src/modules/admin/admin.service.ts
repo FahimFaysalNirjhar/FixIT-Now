@@ -134,6 +134,39 @@ const updateUserStatus = async (
   return updatedUser;
 };
 
+const getAllBookings = async () => {
+  const bookings = await prisma.booking.findMany({
+    orderBy: {
+      createdAt: "desc",
+    },
+    include: {
+      customer: {
+        omit: {
+          password: true,
+        },
+      },
+      technician: {
+        include: {
+          user: {
+            omit: {
+              password: true,
+            },
+          },
+        },
+      },
+      service: {
+        include: {
+          category: true,
+        },
+      },
+      payment: true,
+      reviews: true,
+    },
+  });
+
+  return bookings;
+};
+
 export const adminService = {
   createCategory,
   updateCategory,
@@ -141,4 +174,5 @@ export const adminService = {
   deleteCategory,
   getAllUsers,
   updateUserStatus,
+  getAllBookings,
 };
