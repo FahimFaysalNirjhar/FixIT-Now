@@ -104,7 +104,7 @@ src
 Clone the repository
 
 ```bash
-git clone https://github.com/your-username/fix-it-now-backend.git
+git clone https://github.com/FahimFaysalNirjhar/FixIT-Now-Assignment-4
 ```
 
 Install dependencies
