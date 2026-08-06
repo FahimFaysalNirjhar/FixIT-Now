@@ -174,7 +174,7 @@ const handleWebhook = async (payload: Buffer, signature: string) => {
     config.stripe_webhook_secret!,
   );
 
-  console.log(event.type);
+  // console.log(event.type);
 
   switch (event.type) {
     case "checkout.session.completed":

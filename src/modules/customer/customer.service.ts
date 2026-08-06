@@ -43,8 +43,8 @@ const createBooking = async (
   const scheduledStart = new Date(payload.scheduledStart);
   const scheduledEnd = new Date(payload.scheduledEnd);
 
-  console.log("scheduledStart", scheduledStart);
-  console.log("scheduledEnd", scheduledEnd);
+  // console.log("scheduledStart", scheduledStart);
+  // console.log("scheduledEnd", scheduledEnd);
 
   if (scheduledStart >= scheduledEnd) {
     throw new Error("Start time must be before end time.");
@@ -118,11 +118,11 @@ const createBooking = async (
     },
   });
 
-  console.log("Conflict:", conflict);
-  console.log({
-    requestedStart: scheduledStart,
-    requestedEnd: scheduledEnd,
-  });
+  // console.log("Conflict:", conflict);
+  // console.log({
+  //   requestedStart: scheduledStart,
+  //   requestedEnd: scheduledEnd,
+  // });
 
   if (conflict) {
     throw new Error("The selected time slot has already been booked.");

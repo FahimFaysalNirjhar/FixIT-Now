@@ -8,8 +8,8 @@ const createCheckoutSession = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const { bookingId } = req.body;
 
-    console.log(req.body);
-    console.log(req.body.bookingId);
+    // console.log(req.body);
+    // console.log(req.body.bookingId);
 
     const result = await paymentService.createCheckoutSession(bookingId);
 
@@ -58,12 +58,12 @@ const handleWebhook = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const payload = req.body as Buffer;
     const signature = req.headers["stripe-signature"]!;
-    console.log("Webhook reached");
-    console.log(signature);
+    // console.log("Webhook reached");
+    // console.log(signature);
 
-    console.log(Buffer.isBuffer(req.body));
-    console.log(typeof req.body);
-    console.log(req.body.constructor.name);
+    // console.log(Buffer.isBuffer(req.body));
+    // console.log(typeof req.body);
+    // console.log(req.body.constructor.name);
 
     await paymentService.handleWebhook(payload, signature as string);
 
