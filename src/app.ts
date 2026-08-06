@@ -13,6 +13,7 @@ import { customerRouter } from "./modules/customer/customer.route";
 import { paymentRouter } from "./modules/payment/payment.route";
 import { paymentController } from "./modules/payment/payment.controller";
 import { reviewRouter } from "./modules/review/review.router";
+import { notFound } from "./modules/middleware/notFound";
 
 const app: Application = express();
 
@@ -47,6 +48,7 @@ app.use("/api/customer", customerRouter);
 app.use("/api/payment", paymentRouter);
 app.use("/api/reviews", reviewRouter);
 
+app.use(notFound);
 app.use(globalErrorHandler);
 
 export default app;
