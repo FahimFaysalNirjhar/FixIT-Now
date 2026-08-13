@@ -24,11 +24,11 @@ https://documenter.getpostman.com/view/54926491/2sBY4VKHSY
 
 Use the following credentials to log in and explore the **Admin Dashboard**:
 
-| Field    | Value             |
-| -------- | ----------------- |
-| Email    | `admin@admin.com` |
-| Role     | `admin`           |
-| Password | `123456@Qa`       |
+| Field    | Value               |
+| -------- | ------------------- |
+| Email    | `admin@example.com` |
+| Role     | `admin`             |
+| Password | `Password@123`      |
 
 > This is a demo account seeded for reviewers/graders to explore admin-only features (rider approval, user management, parcel/rider assignment, platform-wide stats).
 
