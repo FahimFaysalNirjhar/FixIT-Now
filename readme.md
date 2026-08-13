@@ -12,6 +12,26 @@ https://fix-it-now-assignment-4.vercel.app
 
 ---
 
+## 📮 API Documentation (Postman)
+
+Explore and test every endpoint interactively via the published Postman collection:
+
+https://documenter.getpostman.com/view/54926491/2sBY4VKHSY
+
+---
+
+## 🔑 Admin Credentials
+
+Use the following credentials to log in and explore the **Admin Dashboard**:
+
+| Field    | Value             |
+| -------- | ----------------- |
+| Email    | `admin@admin.com` |
+| Role     | `admin`           |
+| Password | `123456@Qa`       |
+
+> This is a demo account seeded for reviewers/graders to explore admin-only features (rider approval, user management, parcel/rider assignment, platform-wide stats).
+
 ## ✨ Features
 
 ### Authentication & Authorization
@@ -237,6 +257,14 @@ PORT=5000
 | GET    | /api/reviews/:id |
 
 ---
+
+# 📸 API Testing
+
+You can test the API using:
+
+- **Postman** — see the full [API documentation & collection](https://documenter.getpostman.com/view/54926491/2sBY4VKHSY)
+- Thunder Client
+- Insomnia
 
 # 💳 Payment Flow
 
