@@ -36,8 +36,8 @@ export const auth = (...requiredRoles: Role[]) => {
 
     const { email, name, id, role } = verifiedToken.data as JwtPayload;
 
-    console.log("Role from token:", role);
-    console.log("Required roles:", requiredRoles);
+    // console.log("Role from token:", role);
+    // console.log("Required roles:", requiredRoles);
 
     if (requiredRoles.length && !requiredRoles.includes(role)) {
       throw new Error(

@@ -5,6 +5,8 @@ import { userController } from "./user.controller";
 
 const router = Router();
 
+router.get("/check-phone", userController.checkPhone);
+
 router.post("/register", userController.registerUser);
 
 router.get(

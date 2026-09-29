@@ -3,6 +3,22 @@ import { prisma } from "../../lib/prisma";
 import config from "../../config";
 import { RegisterUserPayload } from "./user.interface";
 
+const isPhoneTaken = async (rawPhone: string) => {
+  // Same normalization the frontend uses before saving
+  const phone = rawPhone.replace(/[\s-]/g, "");
+
+  if (!/^\+?[0-9]{10,15}$/.test(phone)) {
+    throw new Error("Invalid phone number");
+  }
+
+  const user = await prisma.user.findFirst({
+    where: { phone },
+    select: { id: true },
+  });
+
+  return Boolean(user);
+};
+
 const registerUser = async (payload: RegisterUserPayload) => {
   const { name, email, password, profilePhoto, role, phone, address } = payload;
   const isUserExist = await prisma.user.findUnique({
@@ -97,4 +113,5 @@ export const userService = {
   registerUser,
   getMyProfile,
   updateMyProfile,
+  isPhoneTaken,
 };

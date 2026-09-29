@@ -4,6 +4,20 @@ import { userService } from "./user.service";
 import { sendResponse } from "../utils/sendResponse";
 import HttpStatus from "http-status";
 
+const checkPhone = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const phone = String(req.query.phone ?? "");
+    const exists = await userService.isPhoneTaken(phone);
+
+    sendResponse(res, {
+      success: true,
+      statusCode: HttpStatus.OK,
+      message: "Phone number checked",
+      data: { exists },
+    });
+  },
+);
+
 const registerUser = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const payload = req.body;
@@ -47,4 +61,9 @@ const updateMyProfile = catchAsync(
   },
 );
 
-export const userController = { registerUser, getMyProfile, updateMyProfile };
+export const userController = {
+  registerUser,
+  getMyProfile,
+  updateMyProfile,
+  checkPhone,
+};
