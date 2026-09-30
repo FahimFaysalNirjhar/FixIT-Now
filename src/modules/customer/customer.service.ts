@@ -4,6 +4,32 @@ import {
   CreateBookingPayload,
   UpdateCustomerProfilePayload,
 } from "./customer.interface";
+
+const TZ = "Asia/Dhaka"; // timezone the technician's hours are in
+
+// Weekday + minutes-since-midnight of a moment, in the technician's timezone
+const partsOf = (date: Date) => {
+  const p = Object.fromEntries(
+    new Intl.DateTimeFormat("en-US", {
+      timeZone: TZ,
+      weekday: "long",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    })
+      .formatToParts(date)
+      .map((x) => [x.type, x.value]),
+  );
+
+  return {
+    day: (p.weekday ?? "").toUpperCase(),
+    minutes: (Number(p.hour ?? 0) % 24) * 60 + Number(p.minute ?? 0),
+  };
+};
+
+// Stored availability times are wall-clock values kept as UTC
+const storedMinutes = (d: Date) => d.getUTCHours() * 60 + d.getUTCMinutes();
+
 const updateProfile = async (
   userId: string,
   payload: UpdateCustomerProfilePayload,
@@ -43,60 +69,38 @@ const createBooking = async (
   const scheduledStart = new Date(payload.scheduledStart);
   const scheduledEnd = new Date(payload.scheduledEnd);
 
-  // console.log("scheduledStart", scheduledStart);
-  // console.log("scheduledEnd", scheduledEnd);
-
   if (scheduledStart >= scheduledEnd) {
     throw new Error("Start time must be before end time.");
   }
 
   // Check technician availability
-  const availability = await prisma.availability.findFirst({
+  const start = partsOf(scheduledStart);
+  const end = partsOf(scheduledEnd);
+  const endMinutes = end.minutes === 0 ? 1440 : end.minutes; // ends at midnight
+
+  const windows = await prisma.availability.findMany({
     where: {
       technicianId: service.technicianId,
       isAvailable: true,
-      day: scheduledStart
-        .toLocaleDateString("en-US", {
-          weekday: "long",
-        })
-        .toUpperCase() as any,
+      day: start.day as any,
     },
   });
 
-  if (!availability) {
+  if (windows.length === 0) {
     throw new Error("Technician is not available on this day.");
   }
 
-  // Ensure selected time fits inside availability
-  const availableStart = new Date(availability.startTime);
-  const availableEnd = new Date(availability.endTime);
+  const fits = windows.some((w) => {
+    const from = storedMinutes(new Date(w.startTime));
+    const to = storedMinutes(new Date(w.endTime)) || 1440;
+    return start.minutes >= from && endMinutes <= to;
+  });
 
-  if (scheduledStart < availableStart || scheduledEnd > availableEnd) {
+  if (!fits) {
     throw new Error("Selected time is outside the technician's availability.");
   }
 
   // Prevent overlapping bookings
-  // const conflict = await prisma.booking.findFirst({
-  //   where: {
-  //     technicianId: service.technicianId,
-  //     status: {
-  //       in: ["REQUESTED", "ACCEPTED", "IN_PROGRESS"],
-  //     },
-  //     AND: [
-  //       {
-  //         scheduledStart: {
-  //           lt: scheduledEnd,
-  //         },
-  //       },
-  //       {
-  //         scheduledEnd: {
-  //           gt: scheduledStart,
-  //         },
-  //       },
-  //     ],
-  //   },
-  // });
-
   const conflict = await prisma.booking.findFirst({
     where: {
       technicianId: service.technicianId,
@@ -117,12 +121,6 @@ const createBooking = async (
       ],
     },
   });
-
-  // console.log("Conflict:", conflict);
-  // console.log({
-  //   requestedStart: scheduledStart,
-  //   requestedEnd: scheduledEnd,
-  // });
 
   if (conflict) {
     throw new Error("The selected time slot has already been booked.");
