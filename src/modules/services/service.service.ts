@@ -49,8 +49,10 @@ const getAllServices = async (query: IServiceQuery) => {
     });
   }
 
+  // Only active services from active (non-blocked) technicians
   andConditions.push({
     isActive: true,
+    technician: { user: { status: "ACTIVE" } },
   });
 
   const services = await prisma.service.findMany({
@@ -98,6 +100,7 @@ const getSingleService = async (serviceId: string) => {
     where: {
       id: serviceId,
       isActive: true,
+      technician: { user: { status: "ACTIVE" } },
     },
     include: {
       category: true,

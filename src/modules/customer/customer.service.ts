@@ -60,6 +60,7 @@ const createBooking = async (
     where: {
       id: payload.serviceId,
       isActive: true,
+      technician: { user: { status: "ACTIVE" } },
     },
     include: {
       technician: true,
