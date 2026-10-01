@@ -65,7 +65,14 @@ const getAllTechnicians = async (query: ITechnicianQuery) => {
   const sortBy = query.sortBy || "createdAt";
   const sortOrder = query.sortOrder || "desc";
 
-  const andConditions: Prisma.TechnicianProfileWhereInput[] = [];
+  // FIX 1: blocked technicians never appear in the public list or its count
+  const andConditions: Prisma.TechnicianProfileWhereInput[] = [
+    {
+      user: {
+        status: "ACTIVE",
+      },
+    },
+  ];
 
   if (query.searchTerm) {
     andConditions.push({
@@ -164,6 +171,10 @@ const getSingleTechnician = async (technicianId: string) => {
   const technician = await prisma.technicianProfile.findUniqueOrThrow({
     where: {
       id: technicianId,
+      // FIX 2: a blocked technician's public page returns "not found"
+      user: {
+        status: "ACTIVE",
+      },
     },
     include: {
       user: {
@@ -206,6 +217,10 @@ const getTechnicianAvailability = async (technicianId: string) => {
   await prisma.technicianProfile.findUniqueOrThrow({
     where: {
       id: technicianId,
+      // FIX 3: same rule for the public availability slots
+      user: {
+        status: "ACTIVE",
+      },
     },
   });
 
